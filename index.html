@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sine Nomine — Software Engineer</title>
+  <meta name="description" content="CS&E student at TU Delft. I build full-stack web apps, automation tools, and systems software. Open to internships and freelance work." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --ink:       #0f0e0d;
+      --paper:     #f5f2ec;
+      --accent:    #c84b2f;
+      --muted:     #7a7266;
+      --line:      #d4cfc6;
+      --card:      #eeeae2;
+
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-mono:    'DM Mono', 'Courier New', monospace;
+      --f-body:    'Instrument Sans', sans-serif;
+
+      --gap: clamp(1.5rem, 4vw, 3rem);
+      --page-max: 1100px;
+    }
+
+    /* ─── Reset ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--f-body);
+      font-size: clamp(15px, 1.1vw, 17px);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── Utility ────────────────────────────────────────────────── */
+    .mono  { font-family: var(--f-mono); font-size: 0.8em; letter-spacing: 0.04em; }
+    .accent { color: var(--accent); }
+    .muted  { color: var(--muted); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    .container {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 0 clamp(1.25rem, 5vw, 3rem);
+    }
+
+    /* ─── Nav ────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.1rem 0;
+      background: color-mix(in srgb, var(--paper) 90%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-logo {
+      font-family: var(--f-display);
+      font-size: 1.15rem;
+      font-style: italic;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--f-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── Hero ───────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: clamp(3rem, 7vw, 6rem);
+      padding-top: 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-text {
+      position: absolute;
+      top: 50%;
+      left: -0.04em;
+      transform: translateY(-50%);
+      font-family: var(--f-display);
+      font-size: clamp(9rem, 20vw, 19rem);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--line);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.7;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--f-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.1s ease forwards;
+    }
+
+    h1 {
+      font-family: var(--f-display);
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.25s ease forwards;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      max-width: 520px;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.4s ease forwards;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.55s ease forwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.6rem;
+      font-family: var(--f-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      border: 1.5px solid var(--ink);
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+    }
+    .btn:hover { background: var(--ink); color: var(--paper); }
+    .btn-filled { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-filled:hover { background: #a83820; border-color: #a83820; color: #fff; }
+
+    /* ─── Section headings ───────────────────────────────────────── */
+    section { padding: clamp(4rem, 9vw, 8rem) 0; }
+    .section-label {
+      font-family: var(--f-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+    h2 {
+      font-family: var(--f-display);
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    /* ─── About ──────────────────────────────────────────────────── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+      align-items: start;
+      margin-top: 3rem;
+    }
+    .about-text p { color: var(--muted); margin-bottom: 1rem; }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .stack-group { }
+    .stack-group-label {
+      font-family: var(--f-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .stack-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .pill {
+      font-family: var(--f-mono);
+      font-size: 0.72rem;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: transparent;
+      transition: all 0.15s;
+    }
+    .pill:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── Projects ───────────────────────────────────────────────── */
+    .projects-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+      gap: 1.5px;
+    }
+    .project-card {
+      background: var(--card);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: background 0.2s;
+      border: 1.5px solid transparent;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.3s ease;
+    }
+    .project-card:hover::before { height: 100%; }
+    .project-card:hover { border-color: var(--line); }
+
+    .project-number {
+      font-family: var(--f-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .project-title {
+      font-family: var(--f-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .project-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      flex: 1;
+    }
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.5rem;
+    }
+    .tag {
+      font-family: var(--f-mono);
+      font-size: 0.65rem;
+      padding: 0.2rem 0.55rem;
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      color: var(--accent);
+      letter-spacing: 0.06em;
+    }
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--f-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      transition: color 0.2s;
+      margin-top: 0.5rem;
+    }
+    .project-link:hover { color: var(--accent); }
+    .project-link svg { transition: transform 0.2s; }
+    .project-link:hover svg { transform: translate(2px, -2px); }
+
+    /* Featured card */
+    .project-card.featured {
+      grid-column: span 2;
+      background: var(--ink);
+      color: var(--paper);
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 3rem;
+    }
+    .project-card.featured .project-number { color: color-mix(in srgb, var(--paper) 40%, transparent); }
+    .project-card.featured .project-desc { color: color-mix(in srgb, var(--paper) 65%, transparent); }
+    .project-card.featured .project-link { color: color-mix(in srgb, var(--paper) 50%, transparent); }
+    .project-card.featured .project-link:hover { color: var(--accent); }
+    .project-card.featured::before { background: var(--accent); }
+    .project-card.featured .tag { background: color-mix(in srgb, var(--accent) 20%, transparent); color: #f5a48b; }
+    .featured-main { flex: 1; display: flex; flex-direction: column; gap: 0.75rem; }
+    .featured-side {
+      flex: 0 0 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding-top: 1.8rem;
+      border-left: 1px solid color-mix(in srgb, var(--paper) 15%, transparent);
+      padding-left: 2.5rem;
+    }
+    .featured-side .mono { color: color-mix(in srgb, var(--paper) 45%, transparent); font-size: 0.68rem; display: block; margin-bottom: 0.3rem; }
+    .featured-side p { font-size: 0.85rem; color: color-mix(in srgb, var(--paper) 70%, transparent); }
+
+    /* ─── Experience ─────────────────────────────────────────────── */
+    #experience { border-top: 1px solid var(--line); }
+    .exp-list { margin-top: 3rem; }
+    .exp-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+    .exp-item:first-child { border-top: 1px solid var(--line); }
+    .exp-meta {
+      font-family: var(--f-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.6;
+      padding-top: 0.15rem;
+    }
+    .exp-content {}
+    .exp-role {
+      font-family: var(--f-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .exp-org {
+      color: var(--accent);
+      font-size: 0.88rem;
+      margin-bottom: 0.75rem;
+    }
+    .exp-desc { color: var(--muted); font-size: 0.9rem; }
+
+    /* ─── Contact ────────────────────────────────────────────────── */
+    #contact {
+      border-top: 1px solid var(--line);
+      text-align: center;
+    }
+    .contact-inner { max-width: 600px; margin: 0 auto; }
+    .contact-inner h2 { margin-bottom: 1rem; }
+    .contact-inner p { color: var(--muted); margin-bottom: 2.5rem; }
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 3rem;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 2rem 0;
+    }
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    footer p { font-family: var(--f-mono); font-size: 0.7rem; color: var(--muted); }
+
+    /* ─── Animations ─────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* stagger children */
+    .stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .stagger.visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0.05s; }
+    .stagger.visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.15s; }
+    .stagger.visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.25s; }
+    .stagger.visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.35s; }
+    .stagger.visible > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 0.45s; }
+    .stagger.visible > *:nth-child(6) { opacity: 1; transform: none; transition-delay: 0.55s; }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 760px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-column: span 1; flex-direction: column; }
+      .featured-side { border-left: none; border-top: 1px solid color-mix(in srgb, var(--paper) 15%, transparent); padding-left: 0; padding-top: 1.25rem; }
+      .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+      .nav-links { gap: 1.2rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Nav ───────────────────────────────────────────────── -->
+  <nav>
+    <div class="container">
+      <a href="#hero" class="nav-logo">SN</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ─── Hero ──────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-bg-text" aria-hidden="true">Build.</div>
+    <div class="container">
+      <p class="hero-eyebrow">BSc CSE · TU Delft · Rotterdam</p>
+      <h1>
+        Software<br />
+        <em>Engineering</em><br />
+        Portfolio
+      </h1>
+      <p class="hero-desc">
+        I build full-stack web apps, automation tools, and systems software -
+        from Django-powered SaaS to mobile application development. Open to full-time positions &amp; freelance.
+      </p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn btn-filled">View Projects</a>
+        <a href="mailto:sinenomine998@gmail.com" class="btn">Get in Touch</a>
+        <a href="resume.pdf" class="btn" target="_blank" rel="noopener">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v13M5 20h14M19 12l-7 7-7-7"/></svg>
+          Résumé
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── About ─────────────────────────────────────────────── -->
+  <section id="about">
+    <div class="container">
+      <p class="section-label">01 · About</p>
+      <h2>Engineer.<br />Builder. <em style="font-style:italic; color:var(--accent)">Problem-solver.</em></h2>
+      <div class="about-grid reveal">
+        <div class="about-text">
+          <p>
+            I'm a third-year Computer Science Engineering student at TU Delft with a
+            hands-on approach to software — I reach for real projects to learn, not just textbooks.
+          </p>
+          <p>
+            My work spans full-stack web development (Django, Python, JavaScript) and practical automation.
+            I care about code that's clean, purposeful, and actually deployed.
+          </p>
+          <p>
+            Alongside coursework I freelance for clients across Europe and contribute
+            part-time to a software team.
+          </p>
+        </div>
+        <div class="about-stack stagger">
+          <div class="stack-group">
+            <p class="stack-group-label">LANGUAGES</p>
+            <div class="stack-pills">
+              <span class="pill">Python</span>
+              <span class="pill">Java</span>
+              <span class="pill">C++</span>
+              <span class="pill">Scala</span>
+              <span class="pill">Dart</span>
+              <span class="pill">JavaScript</span>
+              <span class="pill">HTML/CSS</span>
+              <span class="pill">SQL</span>
+            </div>
+          </div>
+          <div class="stack-group">
+            <p class="stack-group-label">FRAMEWORKS &amp; TOOLS</p>
+            <div class="stack-pills">
+              <span class="pill">Django</span>
+              <span class="pill">Chart.js</span>
+              <span class="pill">Selenium</span>
+              <span class="pill">Spring Boot</span>
+              <span class="pill">Flutter</span>
+              <span class="pill">httpx / asyncio</span>
+              <span class="pill">Shopify API</span>
+              <span class="pill">WordPress</span>
+              <span class="pill">Luigi's Box</span>
+            </div>
+          </div>
+          <div class="stack-group">
+            <p class="stack-group-label">CONCEPTS</p>
+            <div class="stack-pills">
+              <span class="pill">REST APIs</span>
+              <span class="pill">Service Workers</span>
+              <span class="pill">Geofencing</span>
+              <span class="pill">Web Scraping</span>
+              <span class="pill">Auth flows</span>
+              <span class="pill">Machine Learning</span>
+              <span class="pill">Data Analysis</span>
+            </div>
+          </div>
+          <div class="stack-group">
+            <p class="stack-group-label">INFRASTRUCTURE</p>
+            <div class="stack-pills">
+              <span class="pill">Git / GitHub</span>
+              <span class="pill">Cloudflare Pages</span>
+              <span class="pill">Django-Q</span>
+              <span class="pill">PostgreSQL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Projects ──────────────────────────────────────────── -->
+  <section id="projects" style="border-top: 1px solid var(--line);">
+    <div class="container">
+      <div class="projects-header reveal">
+        <div>
+          <p class="section-label">02 · Projects</p>
+          <h2>Things I've <em style="font-style:italic; color:var(--accent)">shipped.</em></h2>
+        </div>
+        <a href="https://github.com/SineNomine998" class="btn" target="_blank" rel="noopener">All on GitHub ↗</a>
+      </div>
+
+      <div class="project-grid stagger">
+
+        <!-- Featured -->
+        <article class="project-card featured">
+          <div class="featured-main">
+            <p class="project-number">Featured - 2025/26</p>
+            <h3 class="project-title">TaxiBuffer</h3>
+            <p class="project-desc">
+              A real-time taxi queue management SaaS built on Django. Drivers
+              join virtual queues via GPS geofencing; automatic dequeueing triggers when
+              they enter the pickup zone. Includes an analytics dashboard with Chart.js
+              rolling averages, per-queue filtering, Django-Q background jobs, and
+              push notifications via Service Workers.
+            </p>
+            <div class="project-tags">
+              <span class="tag">Django</span>
+              <span class="tag">Service Workers</span>
+              <span class="tag">Chart.js</span>
+              <span class="tag">Django-Q</span>
+              <span class="tag">PostgreSQL</span>
+              <span class="tag">GPS Geofencing</span>
+            </div>
+            <a href="https://taxibuffer.nl" class="project-link" target="_blank" rel="noopener">
+              taxibuffer.nl
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
+            </a>
+          </div>
+          <div class="featured-side">
+            <div>
+              <span class="mono">STATUS</span>
+              <p>Live &amp; in active development</p>
+            </div>
+            <div>
+              <span class="mono">ROLE</span>
+              <p>Sole developer &amp; designer</p>
+            </div>
+            <div>
+              <span class="mono">HIGHLIGHTS</span>
+              <p>GPS dequeuing, push notifications, rolling analytics, full auth overhaul</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Aqua Mann -->
+        <article class="project-card">
+          <p class="project-number">Freelance Client - 2026</p>
+          <h3 class="project-title">Aqua Mann<br />Web Platform</h3>
+          <p class="project-desc">
+            Full e-commerce and SEO build for a German irrigation specialist.
+            Shopify + WordPress hybrid; automated supplier catalog ingestion via
+            async Python scraping (httpx + Luigi's Box API); 500+ products pushed
+            via Shopify Admin API with full category hierarchy.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Shopify</span>
+            <span class="tag">WordPress</span>
+            <span class="tag">Python</span>
+            <span class="tag">httpx</span>
+            <span class="tag">Yoast SEO</span>
+          </div>
+          <a href="https://aqua-mann.de" class="project-link" target="_blank" rel="noopener">
+            aqua-mann.de
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </article>
+
+        <!-- TU Delft Library Automation -->
+        <article class="project-card">
+          <p class="project-number">Automation Tool (room claimer) - 2026</p>
+          <h3 class="project-title">Library Room Reservation Bot</h3>
+          <p class="project-desc">
+            Selenium script automating TU Delft library study room reservations via the
+            TimeEdit platform. Involved iterative DOM debugging across dynamically
+            rendered booking UI states, with configurable scheduling and room preferences.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">Selenium</span>
+            <span class="tag">Automation</span>
+          </div>
+          <a href="https://github.com/SineNomine998/room-claimer" class="project-link" target="_blank" rel="noopener">
+            View on GitHub
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Experience ────────────────────────────────────────── -->
+  <section id="experience">
+    <div class="container">
+      <p class="section-label">03 · Experience</p>
+      <h2>Where I've <em style="font-style:italic; color:var(--accent)">worked.</em></h2>
+      <div class="exp-list">
+
+        <div class="exp-item reveal">
+          <div class="exp-meta">
+            <div>2026 - present</div>
+            <div>Rotterdam, NL</div>
+          </div>
+          <div class="exp-content">
+            <p class="exp-role">Freelance Full-Stack Developer</p>
+            <p class="exp-org">Independent · aqua-mann.de &amp; others</p>
+            <p class="exp-desc">
+              End-to-end development for European clients - architecture decisions,
+              supplier catalog automation, Shopify API integrations, and WordPress SEO.
+              Shipped production-ready e-commerce platforms independently.
+            </p>
+          </div>
+        </div>
+
+        <div class="exp-item reveal">
+          <div class="exp-meta">
+            <div>2025 - present</div>
+            <div>Part-time</div>
+          </div>
+          <div class="exp-content">
+            <p class="exp-role">Software Developer</p>
+            <p class="exp-org">Coding the Curbs</p>
+            <p class="exp-desc">
+              Contributing to an employer-assigned project part-time alongside coursework.
+              Hands-on experience with real-world software team practices.
+            </p>
+          </div>
+        </div>
+
+        <div class="exp-item reveal">
+          <div class="exp-meta">
+            <div>2023 - present</div>
+            <div>Delft, NL</div>
+          </div>
+          <div class="exp-content">
+            <p class="exp-role">BSc Computer Science Engineering</p>
+            <p class="exp-org">TU Delft</p>
+            <p class="exp-desc">
+              Coursework spanning algorithms &amp; data structures, machine learning, theoretical
+              CS, linear algebra, computer organization, and software engineering.
+              Consistently applying course theory to real projects.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Contact ───────────────────────────────────────────── -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-inner reveal">
+        <p class="section-label" style="justify-content:center;">04 · Contact</p>
+        <h2>Let's build<br /><em style="font-style:italic; color:var(--accent)">something.</em></h2>
+        <p style="margin-top: 1rem;">
+          Currently looking for a summer 2026 software engineering internship or full-time positions as a SWE,
+          and always open to interesting freelance projects.
+        </p>
+        <a href="mailto:sinenomine998@gmail.com" class="btn btn-filled" style="margin-top: 0.5rem;">
+          Say hello →
+        </a>
+        <div class="contact-links">
+          <a href="https://github.com/SineNomine998" class="btn" target="_blank" rel="noopener">GitHub ↗</a>
+          <a href="https://www.linkedin.com/in/enes-yavuz-kozan-19a569253/" class="btn" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a href="resume.pdf" class="btn" target="_blank" rel="noopener">Résumé ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <p class="mono">© 2026 Enes Yavuz Kozan</p>
+      <p class="mono" style="color: var(--line);">Built from scratch · Hosted on Cloudflare Pages</p>
+    </div>
+  </footer>
+
+  <!-- ─── JS: scroll reveals ────────────────────────────────── -->
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll('.reveal, .stagger').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
